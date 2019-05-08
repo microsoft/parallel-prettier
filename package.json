@@ -1,0 +1,55 @@
+{
+  "name": "@mixer/parallel-prettier",
+  "version": "1.0.0",
+  "description": "Concurrent prettier runner",
+  "main": "./dist/index.js",
+  "bin": {
+    "pprettier": "./dist/index.js"
+  },
+  "scripts": {
+    "prepare": "tsc",
+    "build": "tsc",
+    "fmt": "node dist/index --write \"src/**/*.ts\" && npm run test:lint -- --fix",
+    "test": "npm run test:lint && npm run test:fmt",
+    "test:lint": "tslint --project tsconfig.json \"src/**/*.ts\"",
+    "test:fmt": "node dist/index \"src/**/*.ts\" --check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mixer/parallel-prettier.git"
+  },
+  "keywords": [
+    "prettier",
+    "parallel",
+    "concurrent",
+    "mixer"
+  ],
+  "author": "Connor Peet <connor@peet.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mixer/parallel-prettier/issues"
+  },
+  "homepage": "https://github.com/mixer/parallel-prettier#readme",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^2.20.0",
+    "glob-stream": "^6.1.0",
+    "ora": "^3.4.0",
+    "prettier": "^1.17.0",
+    "rxjs": "^6.5.1"
+  },
+  "devDependencies": {
+    "@types/glob-stream": "^6.1.0",
+    "@types/node": "^12.0.0",
+    "@types/prettier": "^1.16.3",
+    "tslint": "^5.16.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.4.5"
+  },
+  "prettier": {
+    "trailingComma": "all",
+    "singleQuote": true,
+    "printWidth": 100,
+    "tabWidth": 2
+  }
+}
