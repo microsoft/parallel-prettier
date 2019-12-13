@@ -1,12 +1,12 @@
-import * as cluster from 'cluster';
-import { fromEvent, Observable } from 'rxjs';
-import { filter, map, take, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { filter, take, tap } from 'rxjs/operators';
+import { Worker } from './cluster';
 import {
+  IDiscoveredFile,
   IFormatResults,
   IInitializationMessage,
   IOptions,
   MessageType,
-  WorkerMessage,
   WorkerMode,
 } from './protocol';
 
@@ -14,7 +14,7 @@ import {
  * Pool of workers.
  */
 export class WorkerPool {
-  private readonly workers: Array<{ worker: cluster.Worker; active: number }> = [];
+  private readonly workers: Array<{ worker: Worker; active: number }> = [];
   private workIdCounter: number = 0;
 
   constructor(private readonly options: IOptions) {}
@@ -22,7 +22,7 @@ export class WorkerPool {
   /**
    * Schedules the given files to be formatted.
    */
-  public format(files: string[]): Observable<IFormatResults> {
+  public format(files: IDiscoveredFile[]): Observable<IFormatResults> {
     if (this.workers.length < this.options.concurrency) {
       this.spawnWorker();
     }
@@ -33,8 +33,7 @@ export class WorkerPool {
     target.worker.send({ type: MessageType.WorkerFiles, files, id });
     this.sortWorkers();
 
-    return fromEvent<[WorkerMessage]>(target.worker, 'message').pipe(
-      map(([m]) => m),
+    return target.worker.messages().pipe(
       filter(m => m.id === id),
       take(1),
       tap(() => {
@@ -49,7 +48,7 @@ export class WorkerPool {
   }
 
   private spawnWorker() {
-    const worker = { worker: cluster.fork(), active: 0 };
+    const worker = { worker: Worker.spawn(), active: 0 };
     this.workers.unshift(worker);
     worker.worker.send({
       mode: this.options.check

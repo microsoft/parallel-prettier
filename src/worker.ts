@@ -3,11 +3,11 @@ import * as prettier from 'prettier';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { last, mergeMap } from 'rxjs/operators';
 import { promisify } from 'util';
+import { onMessage, postMessage } from './cluster';
 import {
   IFilesMessage,
   IFormattedMessage,
   IInitializationMessage,
-  MasterMessage,
   MessageType,
   WorkerMessage,
   WorkerMode,
@@ -61,7 +61,7 @@ export function startWorker() {
   const settings = new Subject<IInitializationMessage>();
   const files = new Subject<IFilesMessage>();
 
-  process.on('message', (data: MasterMessage) => {
+  onMessage().subscribe(data => {
     switch (data.type) {
       case MessageType.WorkerInitialization:
         settings.next(data);
@@ -74,10 +74,7 @@ export function startWorker() {
 
   combineLatest(settings, files)
     .pipe(mergeMap(([s, f]) => runFormatting(s, f)))
-    .subscribe(
-      message => process.send!(message),
-      err => {
-        throw err;
-      },
-    );
+    .subscribe(postMessage, err => {
+      throw err;
+    });
 }

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import * as cluster from 'cluster';
 import * as commander from 'commander';
 import { cpus } from 'os';
 import * as prettier from 'prettier';
+import { isMainThread } from './cluster';
 
 const { version } = require('../package.json');
 
@@ -28,8 +28,8 @@ function startMaster() {
   });
 }
 
-if (module === require.main && cluster.isMaster) {
+if (module === require.main && isMainThread) {
   startMaster();
-} else if (cluster.isWorker) {
+} else if (!isMainThread) {
   require('./worker').startWorker();
 }

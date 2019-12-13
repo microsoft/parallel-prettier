@@ -3,13 +3,13 @@ import { Observable } from 'rxjs';
 import { bufferCount, mergeMap } from 'rxjs/operators';
 
 import { ProgressReporter } from './progress-reporter';
-import { IOptions } from './protocol';
+import { IDiscoveredFile, IOptions } from './protocol';
 import { WorkerPool } from './worker-pool';
 
 const bufferSize = 50;
 
 function runGlobs(files: string[]) {
-  return new Observable<string>(subscriber => {
+  return new Observable<IDiscoveredFile>(subscriber => {
     const stream = globStream(files);
     stream.addListener('data', data => subscriber.next(data));
     stream.addListener('error', err => subscriber.error(err));
