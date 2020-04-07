@@ -38,6 +38,9 @@
     "prettier": "^2.0.4",
     "rxjs": "^6.5.5"
   },
+  "peerDependencies": {
+    "prettier": "^2.0.0"
+  },
   "devDependencies": {
     "@types/glob-stream": "^6.1.0",
     "@types/node": "^12.0.0",
