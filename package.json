@@ -9,9 +9,9 @@
   "scripts": {
     "prepare": "tsc",
     "build": "tsc",
-    "fmt": "node dist/index --write \"src/**/*.ts\" && npm run test:lint -- --fix",
+    "fmt": "tsc && node dist/index --write \"src/**/*.ts\" && npm run test:lint -- --fix",
     "test": "npm run test:lint && npm run test:fmt",
-    "test:lint": "tslint --project tsconfig.json \"src/**/*.ts\"",
+    "test:lint": "eslint \"src/**/*.ts\"",
     "test:fmt": "node dist/index \"src/**/*.ts\" --check"
   },
   "repository": {
@@ -31,20 +31,22 @@
   },
   "homepage": "https://github.com/mixer/parallel-prettier#readme",
   "dependencies": {
-    "chalk": "^2.4.2",
-    "commander": "^2.20.0",
+    "chalk": "^4.0.0",
+    "commander": "^5.0.0",
     "glob-stream": "^6.1.0",
-    "ora": "^3.4.0",
-    "prettier": "^1.17.0",
-    "rxjs": "^6.5.1"
+    "ora": "^4.0.3",
+    "prettier": "^2.0.4",
+    "rxjs": "^6.5.5"
   },
   "devDependencies": {
     "@types/glob-stream": "^6.1.0",
     "@types/node": "^12.0.0",
-    "@types/prettier": "^1.16.3",
-    "tslint": "^5.16.0",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.4.5"
+    "@types/prettier": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-header": "^3.0.0",
+    "typescript": "^3.8.3"
   },
   "prettier": {
     "trailingComma": "all",
