@@ -1,3 +1,7 @@
+/*---------------------------------------------------------
+ * Copyright (C) Microsoft Corporation. All rights reserved.
+ *--------------------------------------------------------*/
+
 import * as globStream from 'glob-stream';
 import { Observable } from 'rxjs';
 import { bufferCount, mergeMap } from 'rxjs/operators';
@@ -9,10 +13,10 @@ import { WorkerPool } from './worker-pool';
 const bufferSize = 50;
 
 function runGlobs(files: string[]) {
-  return new Observable<string>(subscriber => {
+  return new Observable<string>((subscriber) => {
     const stream = globStream(files);
-    stream.addListener('data', data => subscriber.next(data));
-    stream.addListener('error', err => subscriber.error(err));
+    stream.addListener('data', (data) => subscriber.next(data));
+    stream.addListener('error', (err) => subscriber.error(err));
     stream.addListener('finish', () => subscriber.complete());
     stream.resume();
   });
@@ -25,11 +29,11 @@ export function spawnWorkers(options: IOptions) {
   runGlobs(options.files)
     .pipe(
       bufferCount(bufferSize),
-      mergeMap(files => pool.format(files)),
+      mergeMap((files) => pool.format(files)),
     )
     .subscribe(
-      result => progress.update(result),
-      err => {
+      (result) => progress.update(result),
+      (err) => {
         throw err;
       },
       () => {

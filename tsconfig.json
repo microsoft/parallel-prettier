@@ -7,6 +7,7 @@
     "noUnusedParameters": true,
     "strict": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "newLine": "LF",
     "module": "commonjs",
     "target": "es6",

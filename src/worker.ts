@@ -1,3 +1,7 @@
+/*---------------------------------------------------------
+ * Copyright (C) Microsoft Corporation. All rights reserved.
+ *--------------------------------------------------------*/
+
 import { readFile, writeFile } from 'fs';
 import * as prettier from 'prettier';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
@@ -33,7 +37,7 @@ function runFormatting(
   };
 
   return of(...files.files).pipe(
-    mergeMap(async file => {
+    mergeMap(async (file) => {
       const contents = await readFileAsync(file.path, 'utf-8');
       const formatted = prettier.format(contents, {
         ...(await prettier.resolveConfig(file.path)),
@@ -75,8 +79,9 @@ export function startWorker() {
   combineLatest(settings, files)
     .pipe(mergeMap(([s, f]) => runFormatting(s, f)))
     .subscribe(
-      message => process.send!(message),
-      err => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      (message) => process.send!(message),
+      (err) => {
         throw err;
       },
     );

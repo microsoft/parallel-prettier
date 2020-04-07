@@ -1,3 +1,7 @@
+/*---------------------------------------------------------
+ * Copyright (C) Microsoft Corporation. All rights reserved.
+ *--------------------------------------------------------*/
+
 import * as ora from 'ora';
 import { relative } from 'path';
 import { IFormatResults } from './protocol';

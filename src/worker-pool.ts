@@ -1,3 +1,7 @@
+/*---------------------------------------------------------
+ * Copyright (C) Microsoft Corporation. All rights reserved.
+ *--------------------------------------------------------*/
+
 import * as cluster from 'cluster';
 import { fromEvent, Observable } from 'rxjs';
 import { filter, map, take, tap } from 'rxjs/operators';
@@ -15,7 +19,7 @@ import {
  */
 export class WorkerPool {
   private readonly workers: Array<{ worker: cluster.Worker; active: number }> = [];
-  private workIdCounter: number = 0;
+  private workIdCounter = 0;
 
   constructor(private readonly options: IOptions) {}
 
@@ -35,7 +39,7 @@ export class WorkerPool {
 
     return fromEvent<[WorkerMessage]>(target.worker, 'message').pipe(
       map(([m]) => m),
-      filter(m => m.id === id),
+      filter((m) => m.id === id),
       take(1),
       tap(() => {
         target.active--;
