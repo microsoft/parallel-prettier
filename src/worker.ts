@@ -39,6 +39,14 @@ function runFormatting(
   return of(...files.files).pipe(
     mergeMap(async (file) => {
       const contents = await readFileAsync(file.path, 'utf-8');
+      const { ignored } = await prettier.getFileInfo(file.path, {
+        ignorePath: './.prettierignore',
+      });
+
+      if (ignored) {
+        return output;
+      }
+
       const formatted = prettier.format(contents, {
         ...(await prettier.resolveConfig(file.path)),
         filepath: file.path,
