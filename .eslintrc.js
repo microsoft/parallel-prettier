@@ -2,7 +2,6 @@ module.exports = {
   ignorePatterns: ['**/*.d.ts', '**/*.test.ts', '**/*.js'],
   parser: '@typescript-eslint/parser',
   extends: ['plugin:@typescript-eslint/recommended'],
-  plugins: ['header'],
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
