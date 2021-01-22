@@ -12,6 +12,7 @@ import { IFormatResults } from './protocol';
 export class ProgressReporter {
   public total = 0;
   public reformatted = 0;
+  public failed = 0;
   private spinner?: ora.Ora;
 
   constructor(quiet: boolean, private readonly check: boolean) {
@@ -26,6 +27,7 @@ export class ProgressReporter {
   public update(results: IFormatResults) {
     this.total += results.files;
     this.reformatted += results.formatted.length;
+    this.failed += results.failed.length;
 
     if (results.formatted.length) {
       if (this.spinner) {

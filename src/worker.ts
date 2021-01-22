@@ -6,7 +6,7 @@ import { readFile, writeFile } from 'fs';
 import * as prettier from 'prettier';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { last, mergeMap } from 'rxjs/operators';
-import { promisify } from 'util';
+import { inspect, promisify } from 'util';
 import {
   IFilesMessage,
   IFormattedMessage,
@@ -32,6 +32,7 @@ function runFormatting(
   const output: IFormattedMessage = {
     files: files.files.length,
     formatted: [],
+    failed: [],
     id: files.id,
     type: MessageType.Formatted,
   };
@@ -39,10 +40,17 @@ function runFormatting(
   return of(...files.files).pipe(
     mergeMap(async (file) => {
       const contents = await readFileAsync(file.path, 'utf-8');
-      const formatted = prettier.format(contents, {
-        ...(await prettier.resolveConfig(file.path)),
-        filepath: file.path,
-      });
+      let formatted: string;
+      try {
+        formatted = prettier.format(contents, {
+          ...(await prettier.resolveConfig(file.path)),
+          filepath: file.path,
+        });
+      } catch (e) {
+        process.stderr.write('\r\n' + inspect(e) + '\r\n');
+        output.failed.push(file);
+        return output;
+      }
 
       if (formatted === contents) {
         return output;
@@ -76,7 +84,7 @@ export function startWorker() {
     }
   });
 
-  combineLatest(settings, files)
+  combineLatest([settings, files])
     .pipe(mergeMap(([s, f]) => runFormatting(s, f)))
     .subscribe(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

@@ -14,5 +14,8 @@
     "lib": ["es6", "es7"],
     "outDir": "dist",
     "types": ["node"]
-  }
+  },
+  "include": [
+    "src"
+  ]
 }

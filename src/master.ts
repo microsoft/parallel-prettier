@@ -39,7 +39,7 @@ export function spawnWorkers(options: IOptions) {
       () => {
         progress.complete();
 
-        if (progress.reformatted && options.check) {
+        if ((progress.reformatted && options.check) || progress.failed) {
           process.exit(1);
         } else {
           process.exit(0);

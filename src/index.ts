@@ -8,7 +8,9 @@ import * as cluster from 'cluster';
 import * as commander from 'commander';
 import { cpus } from 'os';
 import * as prettier from 'prettier';
-import { version } from '../package.json';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { version } = require('../package.json');
 
 function startMaster() {
   const program = commander

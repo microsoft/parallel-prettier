@@ -3,8 +3,8 @@
  *--------------------------------------------------------*/
 
 import * as cluster from 'cluster';
-import { fromEvent, Observable } from 'rxjs';
-import { filter, map, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, fromEvent, Observable } from 'rxjs';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import {
   IFormatResults,
   IInitializationMessage,
@@ -14,11 +14,17 @@ import {
   WorkerMode,
 } from './protocol';
 
+export class WorkerExitedError extends Error {
+  constructor(codeOrSignal: number | string) {
+    super(`Worker exited with unexpected ${codeOrSignal} code`);
+  }
+}
+
 /**
  * Pool of workers.
  */
 export class WorkerPool {
-  private readonly workers: Array<{ worker: cluster.Worker; active: number }> = [];
+  private readonly workers: Array<{ worker: Observable<cluster.Worker>; active: number }> = [];
   private workIdCounter = 0;
 
   /**
@@ -41,10 +47,13 @@ export class WorkerPool {
     const target = this.workers[0];
     const id = this.workIdCounter++;
     target.active++;
-    target.worker.send({ type: MessageType.WorkerFiles, files, id });
     this.sortWorkers();
 
-    return fromEvent<[WorkerMessage]>(target.worker, 'message').pipe(
+    return target.worker.pipe(
+      switchMap((worker) => {
+        worker.send({ type: MessageType.WorkerFiles, files, id });
+        return fromEvent<[WorkerMessage]>(worker, 'message');
+      }),
       map(([m]) => m),
       filter((m) => m.id === id),
       take(1),
@@ -60,9 +69,14 @@ export class WorkerPool {
   }
 
   private spawnWorker() {
-    const worker = { worker: cluster.fork(), active: 0 };
-    this.workers.unshift(worker);
-    worker.worker.send({
+    const worker = cluster.fork();
+    const subject = new BehaviorSubject(worker);
+    this.workers.unshift({ worker: subject, active: 0 });
+
+    worker.on('exit', (code, signal) => subject.error(new WorkerExitedError(code ?? signal)));
+    worker.on('error', (err) => subject.error(err));
+
+    worker.send({
       mode: this.options.check
         ? WorkerMode.Assert
         : this.options.write
