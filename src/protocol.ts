@@ -81,4 +81,5 @@ export interface IOptions {
   concurrency: number;
   quiet: boolean;
   files: string[];
+  ignorePath: string;
 }

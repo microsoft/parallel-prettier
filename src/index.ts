@@ -20,6 +20,7 @@ function startMaster() {
     .option('--write', 'Whether to write files to the output')
     .option('--concurrency [value]', 'Maximum concurrency', String(cpus().length))
     .option('-q, --quiet', 'If set, pprettier will not output progress')
+    .option('--ignore-path [value]', 'Path to an ignore file', '.prettierignore')
     .version(`@mixer/parallel-prettier version ${version} / prettier version ${prettier.version}`)
     .parse(process.argv);
 
@@ -31,6 +32,7 @@ function startMaster() {
     files: program.args,
     quiet: opts.quiet,
     write: opts.write,
+    ignorePath: opts.ignorePath,
   });
 }
 

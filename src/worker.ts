@@ -2,11 +2,11 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
-import { readFile, writeFile } from 'fs';
+import { promises as fs } from 'fs';
 import * as prettier from 'prettier';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { last, mergeMap } from 'rxjs/operators';
-import { inspect, promisify } from 'util';
+import { inspect } from 'util';
 import {
   IFilesMessage,
   IFormattedMessage,
@@ -16,9 +16,6 @@ import {
   WorkerMessage,
   WorkerMode,
 } from './protocol';
-
-const readFileAsync = promisify(readFile);
-const writeFileAsync = promisify(writeFile);
 
 /**
  * Reads the files from the observable stream and, with the specified
@@ -39,7 +36,7 @@ function runFormatting(
 
   return of(...files.files).pipe(
     mergeMap(async (file) => {
-      const contents = await readFileAsync(file.path, 'utf-8');
+      const contents = await fs.readFile(file.path, 'utf-8');
       let formatted: string;
       try {
         formatted = prettier.format(contents, {
@@ -57,7 +54,7 @@ function runFormatting(
       }
 
       if (settings.mode === WorkerMode.Write) {
-        await writeFileAsync(file.path, formatted);
+        await fs.writeFile(file.path, formatted);
       } else if (settings.mode === WorkerMode.Print) {
         process.stdout.write(formatted);
       }
@@ -69,7 +66,7 @@ function runFormatting(
   );
 }
 
-export function startWorker() {
+export function startWorker(): void {
   const settings = new Subject<IInitializationMessage>();
   const files = new Subject<IFilesMessage>();
 
