@@ -29,7 +29,7 @@ export function spawnWorkers(options: IOptions) {
   runGlobs(options.files)
     .pipe(
       bufferCount(bufferSize),
-      mergeMap((files) => pool.format(files)),
+      mergeMap((files) => pool.format(files), pool.maxSize * 2),
     )
     .subscribe(
       (result) => progress.update(result),

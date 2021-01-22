@@ -9,6 +9,7 @@
   "scripts": {
     "prepare": "tsc",
     "build": "tsc",
+    "hello": "node --inspect=9229 hello.js",
     "fmt": "tsc && node dist/index --write \"src/**/*.ts\" && npm run test:lint -- --fix",
     "test": "npm run test:lint && npm run test:fmt",
     "test:lint": "eslint \"src/**/*.ts\"",

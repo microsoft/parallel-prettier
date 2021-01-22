@@ -21,6 +21,13 @@ export class WorkerPool {
   private readonly workers: Array<{ worker: cluster.Worker; active: number }> = [];
   private workIdCounter = 0;
 
+  /**
+   * Maximum size of the worker pool.
+   */
+  public get maxSize() {
+    return this.options.concurrency;
+  }
+
   constructor(private readonly options: IOptions) {}
 
   /**
