@@ -9,7 +9,6 @@ import * as commander from 'commander';
 import { cpus } from 'os';
 import * as prettier from 'prettier';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version } = require('../package.json');
 
 function startMaster() {
@@ -24,12 +23,14 @@ function startMaster() {
     .version(`@mixer/parallel-prettier version ${version} / prettier version ${prettier.version}`)
     .parse(process.argv);
 
+  const opts = program.opts();
+
   require('./master').spawnWorkers({
-    check: program.listDifferent,
-    concurrency: program.concurrency,
+    check: opts.listDifferent,
+    concurrency: opts.concurrency,
     files: program.args,
-    quiet: program.quiet,
-    write: program.write,
+    quiet: opts.quiet,
+    write: opts.write,
   });
 }
 
