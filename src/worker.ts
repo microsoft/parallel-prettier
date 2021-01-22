@@ -2,6 +2,7 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
+import { parentPort } from 'worker_threads';
 import { promises as fs } from 'fs';
 import * as prettier from 'prettier';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
@@ -70,7 +71,7 @@ export function startWorker(): void {
   const settings = new Subject<IInitializationMessage>();
   const files = new Subject<IFilesMessage>();
 
-  process.on('message', (data: MasterMessage) => {
+  parentPort?.on('message', (data: MasterMessage) => {
     switch (data.type) {
       case MessageType.WorkerInitialization:
         settings.next(data);
@@ -85,7 +86,7 @@ export function startWorker(): void {
     .pipe(mergeMap(([s, f]) => runFormatting(s, f)))
     .subscribe(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      (message) => process.send!(message),
+      (message) => parentPort?.postMessage(message),
       (err) => {
         throw err;
       },

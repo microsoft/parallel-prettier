@@ -4,14 +4,14 @@
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
 
-import * as cluster from 'cluster';
+import { isMainThread } from 'worker_threads';
 import * as commander from 'commander';
 import { cpus } from 'os';
 import * as prettier from 'prettier';
 
 const { version } = require('../package.json');
 
-function startMaster() {
+function startMain() {
   const program = commander
     .option(
       '--check, --list-different',
@@ -26,7 +26,7 @@ function startMaster() {
 
   const opts = program.opts();
 
-  require('./master').spawnWorkers({
+  require('./main').spawnWorkers({
     check: opts.listDifferent,
     concurrency: opts.concurrency,
     files: program.args,
@@ -36,8 +36,8 @@ function startMaster() {
   });
 }
 
-if (module === require.main && cluster.isMaster) {
-  startMaster();
-} else if (cluster.isWorker) {
+if (module === require.main && isMainThread) {
+  startMain();
+} else {
   require('./worker').startWorker();
 }
