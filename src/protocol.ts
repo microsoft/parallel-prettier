@@ -19,8 +19,8 @@ export const enum WorkerMode {
 }
 
 /**
- * An InitializationMessage is sent from
- * the master to queue work on its workers.
+ * An InitializationMessage is sent from the
+ * main thread to queue work on its worker threads.
  */
 export interface IInitializationMessage {
   type: MessageType.WorkerInitialization;
@@ -37,9 +37,9 @@ export interface IFilesMessage {
 }
 
 /**
- * MasterMessage is sent from the cluster master to its workers.
+ * MainThreadMessage is sent from the worker main thread to its workers.
  */
-export type MasterMessage = IInitializationMessage | IFilesMessage;
+export type MainThreadMessage = IInitializationMessage | IFilesMessage;
 
 /**
  * Results returned from formatting files.

@@ -12,7 +12,7 @@ import {
   IFilesMessage,
   IFormattedMessage,
   IInitializationMessage,
-  MasterMessage,
+  MainThreadMessage,
   MessageType,
   WorkerMessage,
   WorkerMode,
@@ -21,7 +21,7 @@ import {
 /**
  * Reads the files from the observable stream and, with the specified
  * concurrency, formats them. Returns a stream of results to send back
- * to the master.
+ * to the main thread.
  */
 function runFormatting(
   settings: IInitializationMessage,
@@ -71,7 +71,7 @@ export function startWorker(): void {
   const settings = new Subject<IInitializationMessage>();
   const files = new Subject<IFilesMessage>();
 
-  parentPort?.on('message', (data: MasterMessage) => {
+  parentPort?.on('message', (data: MainThreadMessage) => {
     switch (data.type) {
       case MessageType.WorkerInitialization:
         settings.next(data);
