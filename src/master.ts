@@ -17,7 +17,7 @@ const bufferSize = 50;
 
 function runGlobs(files: string[], ignore: Ignore) {
   return new Observable<string>((subscriber) => {
-    const stream = globStream(files);
+    const stream = globStream(files, { nodir: true });
     stream.addListener('data', (data) => {
       if (!ignore.ignores(relative(data.cwd, data.path))) {
         subscriber.next(data);
