@@ -39,7 +39,7 @@ function runFormatting(
       const contents = await fs.readFile(file.path, 'utf-8');
       let formatted: string;
       try {
-        formatted = prettier.format(contents, {
+        formatted = await prettier.format(contents, {
           ...(await prettier.resolveConfig(file.path)),
           filepath: file.path,
         });

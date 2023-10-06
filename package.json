@@ -37,16 +37,16 @@
     "glob-stream": "^7.0.0",
     "ignore": "^5.1.8",
     "ora": "^5.3.0",
-    "prettier": "^2.0.4",
+    "prettier": "^3.0.3",
     "rxjs": "^6.6.3"
   },
   "peerDependencies": {
-    "prettier": "^2.0.0"
+    "prettier": "^3.0.0"
   },
   "devDependencies": {
     "@types/glob-stream": "^6.1.0",
     "@types/node": "^14.14.22",
-    "@types/prettier": "^2.1.6",
+    "@types/prettier": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
     "eslint": "^7.18.0",
