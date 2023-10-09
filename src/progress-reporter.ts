@@ -15,7 +15,10 @@ export class ProgressReporter {
   public failed = 0;
   private spinner?: ora.Ora;
 
-  constructor(quiet: boolean, private readonly check: boolean) {
+  constructor(
+    quiet: boolean,
+    private readonly check: boolean,
+  ) {
     if (!quiet) {
       this.spinner = ora('Starting...').start();
     }
